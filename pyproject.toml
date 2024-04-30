@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "mass-mailing-service"
+version = "0.1.0"
+description = ""
+authors = ["ElizavetaAveryanova"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.4"
+apscheduler = "^3.10.4"
+django-apscheduler = "^0.6.2"
+psycopg2 = "^2.9.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
