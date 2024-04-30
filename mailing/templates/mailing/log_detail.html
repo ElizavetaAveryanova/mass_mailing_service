@@ -1,0 +1,38 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Детали статистики</h1>
+</div>
+
+<div class="container">
+    <div class="col-12">
+    <div class="row text-start">
+        <div class="col-6">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ object.mailing.message.subject }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Кому: {{ object.clients }}
+                    </p>
+                    <p>
+                        Последняя попытка: {{ object.try_time }}
+                    </p>
+                    <p>
+                        Статус: {{ object.try_status }}
+                    </p>
+                    <p>
+                        {{ object.server_answer }}
+                    </p>
+                    <a href="{% url 'mailing:log_list' %}" class="btn btn-outline-warning">К списку</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}

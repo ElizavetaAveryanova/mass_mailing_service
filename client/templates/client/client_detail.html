@@ -1,0 +1,43 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Клиент</h1>
+</div>
+
+<div class="container">
+    <div class="col-12">
+    <div class="row text-start">
+        <div class="col-6">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ object.email }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        {{ object.last_name }}
+                    </p>
+                    <p>
+                        {{ object.first_name }}
+                    </p>
+                    <p>
+                        {{object.middle_name}}
+                    </p>
+                    <p>
+                        {{object.comment}}
+                    </p>
+                    <div class="btn-group">
+                         <a href="{% url 'client:client_edit' object.pk %}"
+                             class="btn btn-sm btn-outline-secondary">Изменить</a>
+                         <a href="{% url 'client:client_delete' object.pk %}"
+                             class="btn btn-sm btn-outline-secondary">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
