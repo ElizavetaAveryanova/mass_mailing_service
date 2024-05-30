@@ -3,12 +3,13 @@ from django.conf import settings
 from django.core.cache import cache
 import datetime
 
+from blog.models import Article
 from mailing.models import Mailing, Log
 
 
 def send_email(mailing, clients):
     """Функция отправки сообщения выбранному контакту"""
-    client_list = [clients.email]
+    client = [clients.email]
     server_response = ""
     try:
         send_mail(
@@ -32,7 +33,7 @@ def send_mails():
     now = datetime.datetime.now()
 
     for mailing in Mailing.objects.filter(status='STARTED'):  # для рассылки среди всех запущенных рассылок
-        for client in mailing.clients.all():  # для контакта среди всех контактов рассылки
+        for client in mailing.client.all():  # для контакта среди всех контактов рассылки
 
             log = Log.objects.filter(mailing=mailing, contacts=client)  # фильтр лога по конкретной рассылке
             if log.exists():  # если у рассылки уже ранее была попытка отправки
@@ -60,3 +61,18 @@ def send_mails():
                         mailing.status = 'FINISHED'  # изменение статуса рассылки на "завершена"
                         mailing.save()
 
+
+def get_cashed_article_list():
+    """Функция возвращает закешированный список статей"""
+
+    key = 'articles'
+    article_list = Article.objects.all()
+
+    if settings.CACHE_ENABLED:
+        articles = cache.get(key)
+        if articles is None:
+            articles = article_list
+            cache.set(key, articles)
+        return articles
+
+    return article_list
