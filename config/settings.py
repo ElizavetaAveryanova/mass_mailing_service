@@ -15,7 +15,8 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+env_path = BASE_DIR / '.env'
+load_dotenv(dotenv_path=env_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_apscheduler',
+
+    'crispy_forms',
+    'crispy_bootstrap4',
 
     'client',
     'message',
@@ -90,6 +94,7 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
+        'CONN_MAX_AGE': None,
     }
 }
 
@@ -143,6 +148,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+
 # User
 AUTH_USER_MODEL = 'users.User'
 
@@ -167,13 +175,12 @@ if CACHE_ENABLED:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'False'
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL') == 'False'
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_RECEPIENT_LIST = [os.getenv('EMAIL_RECEPIENT_LIST')]
+EMAIL_RECIPIENT_LIST = os.getenv('EMAIL_RECIPIENT_LIST', '').split(',')
 
-# DJANGO_APSCHEDULER_STORE = 'default'
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 APSCHEDULER_RUN_NOW_TIMEOUT = 30  # Seconds

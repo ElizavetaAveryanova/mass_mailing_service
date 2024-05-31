@@ -11,11 +11,19 @@
     <div class="row text-center">
         <div class="col-3">
             <div class="card shadow-sm">
-                <br><h3 class="card-title">Клиенты</h3>
+                <br><h3 class="card-title">Контакты</h3>
                 <img src="/media/client.jpeg" />
                     <div class="card-body">
-
-                        {% if user.is_superuser %}
+                        {% if user.is_authenticated and not user.is_staff %}
+                            <br><div class="btn-group">
+                            <a href="{% url 'client:client_list' %}"
+                               class="btn btn-block btn-outline-primary">Посмотреть все</a>
+                            {% if not user.is_manager %}
+                            <a href="{% url 'client:client_create' %}"
+                               class="btn btn-block btn-outline-primary">Добавить нового</a>
+                            {% endif %}
+                            </div>
+                        {% elif user.is_superuser %}
                             <br><div class="btn-group">
                             <a href="{% url 'client:client_list' %}"
                                class="btn btn-block btn-outline-primary">Посмотреть все</a>
@@ -33,8 +41,16 @@
                 <br><h3 class="card-title">Сообщение</h3>
                 <img src="/media/message.jpeg" />
                     <div class="card-body">
-
-                        {% if user.is_superuser %}
+                        {% if user.is_authenticated and not user.is_staff %}
+                            <div class="btn-group">
+                            <a href="{% url 'message:message_list' %}"
+                               class="btn btn-block btn-outline-primary">Посмотреть все</a>
+                            {% if not user.is_manager %}
+                            <a href="{% url 'message:message_create' %}"
+                               class="btn btn-block btn-outline-primary">Добавить новое</a>
+                            {% endif %}
+                            </div>
+                        {% elif user.is_superuser %}
                             <div class="btn-group">
                             <a href="{% url 'message:message_list' %}"
                                class="btn btn-block btn-outline-primary">Посмотреть все</a>
@@ -50,8 +66,16 @@
                 <br><h3 class="card-title">Рассылка</h3>
                 <img src="/media/mailing.jpeg" />
                     <div class="card-body">
-
-                        {% if user.is_superuser %}
+                        {% if user.is_authenticated and not user.is_staff %}
+                            <div class="btn-group">
+                            <a href="{% url 'mailing:mailing_list' %}"
+                               class="btn btn-block btn-outline-primary">Посмотреть все</a>
+                            {% if not user.is_manager %}
+                            <a href="{% url 'mailing:mailing_create' %}"
+                               class="btn btn-block btn-outline-primary">Добавить новую</a>
+                            {% endif %}
+                            </div>
+                        {% elif user.is_superuser %}
                             <div class="btn-group">
                             <a href="{% url 'mailing:mailing_list' %}"
                                class="btn btn-block btn-outline-primary">Посмотреть все</a>
@@ -67,10 +91,21 @@
                 <br><h3 class="card-title">Статистика</h3>
                 <img src="/media/statistics.jpeg" />
                     <div class="card-body">
-
-                        {% if user.is_superuser %}
+                        {% if user.is_authenticated and not user.is_staff %}
+                        <div class="btn-group">
+                            {% if not user.is_manager %}
                             <a href="{% url 'mailing:log_list' %}"
                                class="btn btn-block btn-outline-primary">Посмотреть <br>отчеты</a>
+                            {% else %}
+                            <a href="{% url 'mailing:log_list' %}"
+                               class="btn btn-block btn-outline-primary">Посмотреть отчеты</a>
+                            {% endif %}
+                        </div>
+                        {% elif user.is_superuser %}
+                            <a href="{% url 'mailing:log_list' %}"
+                               class="btn btn-block btn-outline-primary">Посмотреть <br>отчеты</a>
+
+
                         {% endif %}
                     </div>
             </div>
@@ -96,7 +131,25 @@
       </div><!-- /.col-lg-4 -->
     </div><!-- /.row -->
 <br><br>
-    <p class="lead fst-italic display-6 text-center">Полезно знать</p>
+    <p class="lead fst-italic display-6 text-center">Интересно знать</p>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for object in article_list %}
+        <div class="col">
+            <div class="card shadow-sm py-3">
+                    <p class="text-center fw-bold">
+                        {{ object.title }}
+                    </p>
+                        <div class="card-body">
+                        <p class="card-text">
+                            {{ object.body|truncatechars:100 }}
+                        </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'blog:article_detail' object.pk %}" class="btn btn-outline-warning">Подробнее</a>
+                                <small class="text-muted">{{ object.date }} </small>
+                            </div>
+                        </div>
+            </div>
+        </div>
+        {% endfor %}
 
-{% endblock %}%
+{% endblock %}

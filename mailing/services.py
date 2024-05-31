@@ -9,14 +9,14 @@ from mailing.models import Mailing, Log
 
 def send_email(mailing, clients):
     """Функция отправки сообщения выбранному контакту"""
-    client = [clients.email]
+    client_list = [clients.email]
     server_response = ""
     try:
         send_mail(
             subject=mailing.message.subject,
             message=mailing.message.text,
             from_email=settings.EMAIL_HOST_USER,
-            recipient_list=client_list,
+            recipient_list=[client_list],
             fail_silently=False
         )
     except Exception as expt:  # обработка и сохранение сообщения об ошибке

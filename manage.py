@@ -2,13 +2,11 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from scheduler import start
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 def main():
     """Run administrative tasks."""
     try:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
@@ -18,7 +16,6 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
-    start()
 
 if __name__ == '__main__':
     main()

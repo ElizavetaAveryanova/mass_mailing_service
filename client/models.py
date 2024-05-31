@@ -9,6 +9,7 @@ class Client(models.Model):
     middle_name = models.CharField(max_length=50, **NULLABLE, verbose_name='отчество')
     email = models.EmailField(verbose_name='email')
     comment = models.CharField(max_length=250, verbose_name='комментарий')
+    created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, null=True, blank=True, verbose_name='автор')
 
     def __str__(self):
         return f'{self.last_name} {self.first_name}: {self.email}'

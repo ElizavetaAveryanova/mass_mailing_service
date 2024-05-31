@@ -1,5 +1,5 @@
 from django.urls import path
-from mailing.views import IndexView, MailingListView, MailingCreateView, MailingDetailView
+from mailing.views import IndexView, MailingListView, MailingCreateView, MailingDetailView, AccessErrorView
 from mailing.views import MailingUpdateView, MailingDeleteView, LogListView, LogDetailView
 from mailing.apps import MailingConfig
 
@@ -14,4 +14,5 @@ urlpatterns = [
     path('delete/<int:pk>/', MailingDeleteView.as_view(), name='mailing_delete'),
     path('log_list/', LogListView.as_view(), name='log_list'),
     path('log_view/<int:pk>/', LogDetailView.as_view(), name='log_detail'),
+    path('403error/', AccessErrorView.as_view(), name='access_error'),
 ]
