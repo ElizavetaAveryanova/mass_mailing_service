@@ -52,37 +52,6 @@ class ProfileView(UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
 
-# class PasswordResetView(View):
-#     template_name = 'users/password_reset_form.html'
-#     form_class = PasswordResetForm
-#     success_url = reverse_lazy('users:login')
-#
-#     def get(self, request):
-#         form = self.form_class()
-#         return render(request, self.template_name, {'form': form})
-#
-#     def post(self, request):
-#         form = self.form_class(request.POST)
-#         if form.is_valid():
-#             email = form.cleaned_data['email']
-#             user = get_object_or_404(User, email=email)
-#             letters = list(string.ascii_lowercase)
-#             new_password = ''
-#             for _ in range(5):
-#                 new_password = new_password + random.choice(letters) + str(random.randint(1, 9))
-#             user.set_password(new_password)
-#             user.save()
-#             message = f"Ваш новый пароль: {new_password}\nНикому его не сообщайте."
-#             send_mail(
-#                 'Новый пароль',
-#                 message,
-#                 settings.EMAIL_HOST_USER,
-#                 [user.email],
-#                 fail_silently=False,
-#             )
-#             return redirect(self.success_url)
-#         return render(request, self.template_name, {'form': form})
-
 
 class PasswordResetView(FormView):
     model = User
