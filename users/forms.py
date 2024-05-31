@@ -25,3 +25,10 @@ class UserProfileForm(UserChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password'].widget = forms.HiddenInput()
+
+
+class PasswordResetForm(forms.Form):
+    """
+    Форма для сброса пароля
+    """
+    email = forms.EmailField(label='Email')
