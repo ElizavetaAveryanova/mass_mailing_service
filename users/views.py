@@ -57,23 +57,46 @@ class PasswordResetView(FormView):
     success_url = reverse_lazy("users:login")
 
     def form_valid(self, form):
-        email_form = form.cleaned_data("email")
-        user = User.objects.get(email=email_form)
+        email_form = form.cleaned_data["email"]
+        try:
+            user = User.objects.get(email=email_form)
+        except User.DoesNotExist:
+            return render(self.request, self.template_name,
+                          {"form": form, "error": "Пользователь с таким email-ом не найден."})
 
-        letters = list(string.ascii_lowercase)
-        new_password = ''
-        for _ in range(5):
-            new_password = new_password + random.choice(letters) + str(random.randint(1, 9))
-
+        new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
         user.set_password(new_password)
         user.save()
+
         send_mail(
             subject="Новый пароль",
-            message=f"Ваш пароль: {new_password}",
+            message=f"Ваш новый пароль: {new_password}",
             from_email=DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
+            fail_silently=False,
         )
+
         return super().form_valid(form)
+
+    # def form_valid(self, form):
+    #     email_form = form.cleaned_data("email")
+    #     user = User.objects.get(email=email_form)
+    #
+    #     letters = list(string.ascii_lowercase)
+    #     new_password = ''
+    #     for _ in range(5):
+    #         new_password = new_password + random.choice(letters) + str(random.randint(1, 9))
+    #
+    #     user.set_password(new_password)
+    #     user.save()
+    #     send_mail(
+    #         subject="Новый пароль",
+    #         message=f"Ваш пароль: {new_password}",
+    #         from_email=DEFAULT_FROM_EMAIL,
+    #         recipient_list=[user.email],
+    #     )
+    #     return super().form_valid(form)
+
 
 class UserUpdateView(ManagerRequiredMixin, UpdateView):
     """Контроллер редактирования пользователя"""

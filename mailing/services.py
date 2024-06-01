@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.cache import cache
 import datetime
 import os
+import pytz
 
 from blog.models import Article
 from mailing.models import Mailing, Log
@@ -10,6 +11,7 @@ from mailing.models import Mailing, Log
 
 def send_email(mailing, client):
     """Функция отправки сообщения выбранному контакту"""
+
     recipient_list = [client.email]
     server_response = ""
     try:
@@ -59,32 +61,32 @@ def send_email(mailing, client):
         server_answer=server_response
     )
 
-
 def send_mails():
     """Функция запуска рассылки"""
-    now = datetime.datetime.now() # получение текущей даты и времени
-    for mailing in Mailing.objects.filter(status='STARTED'): # цикл по всем активным (со статусом 'STARTED') рассылкам
-        for client in mailing.client.all(): # для клиента среди всех контактов рассылки
-            log = Log.objects.filter(mailing=mailing, contacts=client).order_by('-try_time').first() # получение последней записи лога для текущей рассылки и контакта
+    print('Привет')
+    now = datetime.datetime.now(pytz.timezone('UTC'))  # получение текущей даты и времени в UTC
+    for mailing in Mailing.objects.filter(status='STARTED'):  # цикл по всем активным (со статусом 'STARTED') рассылкам
+        for client in mailing.client.all():  # для клиента среди всех контактов рассылки
+            log = Log.objects.filter(mailing=mailing, contacts=client).order_by('-try_time').first()  # получение последней записи лога для текущей рассылки и контакта
             if log:
-                last_try_time = log.try_time # получение времени последней попытки отправки
-                if now < mailing.datetime_finish: # не истекло ли время окончания рассылки
-                    if mailing.period == 'DAILY': # является ли рассылка ежедневной
-                        if (now - last_try_time).days >= 1: # прошло ли не менее 1 дня с момента последней попытки отправки
+                last_try_time = log.try_time.astimezone(pytz.timezone('UTC'))  # получение времени последней попытки отправки в UTC
+                if now < mailing.datetime_finish.astimezone(pytz.timezone('UTC')):  # не истекло ли время окончания рассылки
+                    if mailing.period == 'DAILY':  # является ли рассылка ежедневной
+                        if (now - last_try_time).days >= 1:  # прошло ли не менее 1 дня с момента последней попытки отправки
                             send_email(mailing, client)
-                    elif mailing.period == 'WEEKLY': # является ли рассылка еженедельной
+                    elif mailing.period == 'WEEKLY':  # является ли рассылка еженедельной
                         if (now - last_try_time).days >= 7:
                             send_email(mailing, client)
-                    elif mailing.period == 'MONTHLY': # является ли рассылка ежемесячной
+                    elif mailing.period == 'MONTHLY':  # является ли рассылка ежемесячной
                         if (now - last_try_time).days >= 30:
                             send_email(mailing, client)
                 else:
                     mailing.status = 'FINISHED'
                     mailing.save()
             else:
-                if now >= mailing.datetime_start:
+                if now >= mailing.datetime_start.astimezone(pytz.timezone('UTC')):
                     send_email(mailing, client)
-                    if mailing.period == 'ONCE': # является ли рассылка единоразовой
+                    if mailing.period == 'ONCE':  # является ли рассылка единоразовой
                         mailing.status = 'FINISHED'
                         mailing.save()
 def get_cashed_article_list():

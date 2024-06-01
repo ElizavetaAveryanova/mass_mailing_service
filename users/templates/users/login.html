@@ -1,37 +1,27 @@
 {% extends 'mailing/base.html' %}
 
-{% load crispy_forms_tags %}
 {% block content %}
 
-<div class="col-12 m-3">
-    <form class="row" method="post" enctype="multipart/form-data">
-        <div class="col-6">
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Вход</h3>
-                        <div class="card-body">
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Войти в свой аккаунт</h1>
+</div>
 
-                            {% csrf_token %}
-                            {% crispy form %}
-
-                            <p></p>
-                            <button type="submit" class="btn btn-success">
+<div class="container">
+    <div class="col-12 d-flex justify-content-center">
+        <div class="col-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-outline-success">
                                 Войти
-                            </button>
-
-                            <p></p>
-                            <a class="btn btn-danger" href="#">
-                                Восстановить пароль
-                            </a>
-
-                        </div>
-                    </div>
+                        </button>
+                        <a href="{% url 'mailing:index' %}" class="btn btn-outline-warning">Отмена</a>
+                    </form>
                 </div>
             </div>
         </div>
-    </form>
-</div>
-
+    </div>
 
 {% endblock %}

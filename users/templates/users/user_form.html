@@ -1,6 +1,5 @@
 {% extends 'mailing/base.html' %}
 
-{% load crispy_forms_tags %}
 {% block content %}
 
 <div class="col-12 m-3">
@@ -13,7 +12,7 @@
                         <div class="card-body">
 
                             {% csrf_token %}
-                            {% crispy form %}
+                            {{ form.as_p }}
 
                             <p></p>
                             <button type="submit" class="btn btn-success">Сохранить</button>
