@@ -1,11 +1,9 @@
 import random
 import string
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy, reverse
-from django.views import View
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, FormView
 from config import settings
 from config.settings import DEFAULT_FROM_EMAIL
@@ -19,27 +17,25 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('users:check_email')
 
     def form_valid(self, form):
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.id = random.randint(0, 100)
-            user.save()
-            send_mail(
-                'Подтвердите свой электронный адрес',
-                f"Ваша учетная запись подтверждена!"
-                f"Перейдите по ссылке - http://127.0.0.1:8000/users/verify/{user.id}",
-                settings.EMAIL_HOST_USER,
-                [user.email],
-                fail_silently=False,
-            )
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+        send_mail(
+            'Подтвердите свой электронный адрес',
+            f"Ваша учетная запись подтверждена!\nПерейдите по ссылке - http://127.0.0.1:8000/users/verify/{user.id}",
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
         return super().form_valid(form)
 
 def verify(request, id_user):
-    user = User.objects.get(id=id_user)
-    if user is not None and user.id == id_user:
+    user = get_object_or_404(User, id=id_user)
+    if user.is_active is False:
         user.is_active = True
         user.save()
         return HttpResponseRedirect(reverse_lazy('users:login'))
+    return HttpResponseRedirect(reverse_lazy('users:register'))
 
 def check_email(request):
     return render(request, 'users/check_email.html')
@@ -51,7 +47,6 @@ class ProfileView(UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
-
 
 class PasswordResetView(FormView):
     model = User
@@ -76,3 +71,5 @@ class PasswordResetView(FormView):
             recipient_list=[user.email],
         )
         return super().form_valid(form)
+
+
