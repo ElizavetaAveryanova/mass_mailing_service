@@ -11,7 +11,6 @@ from mailing.models import Mailing, Log
 
 def send_email(mailing, client):
     """Функция отправки сообщения выбранному контакту"""
-
     recipient_list = [client.email]
     server_response = ""
     try:
@@ -23,12 +22,12 @@ def send_email(mailing, client):
             fail_silently=False
         )
     except Exception as expt:
-        server_response = expt
+        server_response = str(expt)
         try_status = 'Failed'
     else:
         try_status = 'Ok'
 
-    #  добавление записи в лог
+    # добавление записи в лог
     Log.objects.create(
         mailing=mailing,
         contacts=client,
@@ -36,50 +35,23 @@ def send_email(mailing, client):
         server_answer=server_response
     )
 
-def send_email(mailing, client):
-    """Функция отправки сообщения выбранному контакту"""
-    recipient_list = [client.email]
-    server_response = ""
-    try:
-        send_mail(
-            subject=mailing.message.subject,
-            message=mailing.message.text,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=recipient_list,
-            fail_silently=False
-        )
-    except Exception as expt:
-        server_response = expt
-        try_status = 'Failed'
-    else:
-        try_status = 'Ok'
-
-    Log.objects.create(
-        mailing=mailing,
-        contacts=client,
-        try_status=try_status,
-        server_answer=server_response
-    )
 
 def send_mails():
     """Функция запуска рассылки"""
-    print('Привет')
-    now = datetime.datetime.now(pytz.timezone(settings.TIME_ZONE))  # получение текущей даты и времени в UTC
+    now = datetime.datetime.now(pytz.timezone(settings.TIME_ZONE))  # получение текущей даты и времени в заданной временной зоне
     for mailing in Mailing.objects.filter(status='STARTED'):  # цикл по всем активным (со статусом 'STARTED') рассылкам
-        for client in mailing.client.all():  # для клиента среди всех контактов рассылки
+        for client in mailing.client.all():  # для каждого клиента среди всех контактов рассылки
             log = Log.objects.filter(mailing=mailing, contacts=client).order_by('-try_time').first()  # получение последней записи лога для текущей рассылки и контакта
             if log:
-                last_try_time = log.try_time.astimezone(pytz.timezone(settings.TIME_ZONE))  # получение времени последней попытки отправки в UTC
+                last_try_time = log.try_time.astimezone(pytz.timezone(settings.TIME_ZONE))  # получение времени последней попытки отправки в заданной временной зоне
                 if now < mailing.datetime_finish.astimezone(pytz.timezone(settings.TIME_ZONE)):  # не истекло ли время окончания рассылки
-                    if mailing.period == 'DAILY':  # является ли рассылка ежедневной
-                        if (now - last_try_time).days >= 1:  # прошло ли не менее 1 дня с момента последней попытки отправки
-                            send_email(mailing, client)
-                    elif mailing.period == 'WEEKLY':  # является ли рассылка еженедельной
-                        if (now - last_try_time).days >= 7:
-                            send_email(mailing, client)
-                    elif mailing.period == 'MONTHLY':  # является ли рассылка ежемесячной
-                        if (now - last_try_time).days >= 30:
-                            send_email(mailing, client)
+                    period_check = {
+                        'DAILY': (now - last_try_time).days >= 1,
+                        'WEEKLY': (now - last_try_time).days >= 7,
+                        'MONTHLY': (now - last_try_time).days >= 30
+                    }
+                    if period_check.get(mailing.period, False):
+                        send_email(mailing, client)
                 else:
                     mailing.status = 'FINISHED'
                     mailing.save()
@@ -89,7 +61,8 @@ def send_mails():
                     if mailing.period == 'ONCE':  # является ли рассылка единоразовой
                         mailing.status = 'FINISHED'
                         mailing.save()
-def get_cashed_article_list():
+
+
     """Функция возвращает закешированный список статей"""
 
     key = 'articles'
@@ -103,13 +76,5 @@ def get_cashed_article_list():
         return articles
 
     return article_list
-def main():
-    recipient_list = os.getenv('RECIPIENT_LIST', '').split(',')
-    if recipient_list:
-        send_mails()
-    else:
-        print('RECIPIENT_LIST not set in .env file')
 
-if __name__ == '__main__':
-    main()
 
