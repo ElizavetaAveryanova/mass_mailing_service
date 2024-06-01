@@ -70,8 +70,8 @@ def send_mails():
         for client in mailing.client.all():  # для клиента среди всех контактов рассылки
             log = Log.objects.filter(mailing=mailing, contacts=client).order_by('-try_time').first()  # получение последней записи лога для текущей рассылки и контакта
             if log:
-                last_try_time = log.try_time.astimezone(pytz.timezone('UTC'))  # получение времени последней попытки отправки в UTC
-                if now < mailing.datetime_finish.astimezone(pytz.timezone('UTC')):  # не истекло ли время окончания рассылки
+                last_try_time = log.try_time.astimezone(pytz.timezone(settings.TIME_ZONE))  # получение времени последней попытки отправки в UTC
+                if now < mailing.datetime_finish.astimezone(pytz.timezone(settings.TIME_ZONE)):  # не истекло ли время окончания рассылки
                     if mailing.period == 'DAILY':  # является ли рассылка ежедневной
                         if (now - last_try_time).days >= 1:  # прошло ли не менее 1 дня с момента последней попытки отправки
                             send_email(mailing, client)
@@ -85,7 +85,7 @@ def send_mails():
                     mailing.status = 'FINISHED'
                     mailing.save()
             else:
-                if now >= mailing.datetime_start.astimezone(pytz.timezone('UTC')):
+                if now >= mailing.datetime_start.astimezone(pytz.timezone(settings.TIME_ZONE)):
                     send_email(mailing, client)
                     if mailing.period == 'ONCE':  # является ли рассылка единоразовой
                         mailing.status = 'FINISHED'
