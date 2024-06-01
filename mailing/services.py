@@ -64,7 +64,8 @@ def send_email(mailing, client):
 def send_mails():
     """Функция запуска рассылки"""
     print('Привет')
-    now = datetime.datetime.now(pytz.timezone('UTC'))  # получение текущей даты и времени в UTC
+
+    now = datetime.datetime.now(pytz.timezone(settings.TIME_ZONE))  # получение текущей даты и времени в UTC
     for mailing in Mailing.objects.filter(status='STARTED'):  # цикл по всем активным (со статусом 'STARTED') рассылкам
         for client in mailing.client.all():  # для клиента среди всех контактов рассылки
             log = Log.objects.filter(mailing=mailing, contacts=client).order_by('-try_time').first()  # получение последней записи лога для текущей рассылки и контакта
