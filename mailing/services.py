@@ -7,7 +7,6 @@ import os
 from blog.models import Article
 from mailing.models import Mailing, Log
 
-recipient_list = os.getenv('RECIPIENT_LIST', '').split(',')
 
 def send_email(mailing, client):
     """Функция отправки сообщения выбранному контакту"""

@@ -32,3 +32,13 @@ class PasswordResetForm(forms.Form):
     Форма для сброса пароля
     """
     email = forms.EmailField(label='Email')
+
+class UserStatusForm(UserChangeForm):
+    """Форма для управления статусом пользователя"""
+    class Meta:
+        model = User
+        fields = ('is_active',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password'].widget = forms.HiddenInput()

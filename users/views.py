@@ -2,15 +2,17 @@ import random
 import string
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, FormView
+from django.views.generic import CreateView, UpdateView, FormView, ListView
 from config import settings
 from config.settings import DEFAULT_FROM_EMAIL
-from users.forms import RegisterCreationForm, UserProfileForm, PasswordResetForm
+from mailing.views import ManagerRequiredMixin
+from users.forms import RegisterCreationForm, UserProfileForm, PasswordResetForm, UserStatusForm
 from users.models import User
 
 class RegisterView(CreateView):
+    """Контроллер создания пользователя"""
     model = User
     form_class = RegisterCreationForm
     template_name = 'users/register.html'
@@ -50,6 +52,7 @@ class ProfileView(UpdateView):
 
 class PasswordResetView(FormView):
     model = User
+    form_class = PasswordResetForm
     template_name = "users/password_reset_form.html"
     success_url = reverse_lazy("users:login")
 
@@ -72,4 +75,22 @@ class PasswordResetView(FormView):
         )
         return super().form_valid(form)
 
+class UserUpdateView(ManagerRequiredMixin, UpdateView):
+    """Контроллер редактирования пользователя"""
 
+    model = User
+    form_class = UserStatusForm
+    success_url = reverse_lazy('users:user_list')
+
+class UserListView(ListView):
+    """Контроллер просмотра списка пользователей"""
+    model = User
+    paginate_by = 9  # количество элементов на одну страницу
+    ordering = ['-id']
+
+    def dispatch(self, request, *args, **kwargs):  # отображение списка только для менеджера
+        if self.request.user.is_anonymous:
+            return redirect('mailing:access_error')
+        elif not self.request.user.is_manager:
+            return redirect('mailing:access_error')
+        return super().dispatch(request, *args, **kwargs)
