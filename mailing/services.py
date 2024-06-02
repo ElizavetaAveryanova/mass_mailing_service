@@ -67,6 +67,8 @@
 
 import smtplib
 from django.core.mail import send_mail
+
+import client
 from config import settings
 from config.settings import EMAIL_HOST_USER
 import pytz
@@ -92,11 +94,11 @@ def send_mail_func(mailing):
             fail_silently=False,
         )
         Log.objects.create(try_time=NOW, try_status=Log.SUCCESS, server_answer=send_response,
-                              mailing=mailing)
+                              mailing=mailing, clients=client)
         return send_response
     except smtplib.SMTPException as e:
         Log.objects.create(try_time=NOW, try_status=Log.FAIL, server_answer=e,
-                              mailing=mailing)
+                              mailing=mailing, clients=client)
 
 
 

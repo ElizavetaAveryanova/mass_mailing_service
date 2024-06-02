@@ -42,9 +42,6 @@ INSTALLED_APPS = [
 
     'django_apscheduler',
 
-    # 'crispy_forms',
-    # 'crispy_bootstrap4',
-
     'client',
     'message',
     'mailing',

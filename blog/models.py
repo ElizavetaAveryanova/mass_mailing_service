@@ -9,7 +9,6 @@ class Article(models.Model):
     date = models.DateField(verbose_name='дата публикации')
     views_count = models.PositiveIntegerField(default=0, verbose_name='просмотры')
 
-    is_published = models.BooleanField(default=True, verbose_name='Опубликовано', null=True, blank=True)
 
     def __str__(self):
         return f'{self.title}'
