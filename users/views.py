@@ -78,25 +78,6 @@ class PasswordResetView(FormView):
 
         return super().form_valid(form)
 
-    # def form_valid(self, form):
-    #     email_form = form.cleaned_data("email")
-    #     user = User.objects.get(email=email_form)
-    #
-    #     letters = list(string.ascii_lowercase)
-    #     new_password = ''
-    #     for _ in range(5):
-    #         new_password = new_password + random.choice(letters) + str(random.randint(1, 9))
-    #
-    #     user.set_password(new_password)
-    #     user.save()
-    #     send_mail(
-    #         subject="Новый пароль",
-    #         message=f"Ваш пароль: {new_password}",
-    #         from_email=DEFAULT_FROM_EMAIL,
-    #         recipient_list=[user.email],
-    #     )
-    #     return super().form_valid(form)
-
 
 class UserUpdateView(ManagerRequiredMixin, UpdateView):
     """Контроллер редактирования пользователя"""

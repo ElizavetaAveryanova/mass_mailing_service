@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-import time
+# import time
 
 
 class MailingConfig(AppConfig):

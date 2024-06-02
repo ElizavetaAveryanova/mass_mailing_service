@@ -145,9 +145,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
-
 # User
 AUTH_USER_MODEL = 'users.User'
 
@@ -157,7 +154,6 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/users/'
 
 # Cache
-
 CACHE_ENABLED = os.getenv('CACHE_ENABLED') == 'True'
 if CACHE_ENABLED:
 
@@ -168,7 +164,7 @@ if CACHE_ENABLED:
         }
     }
 
-
+# Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
@@ -181,7 +177,7 @@ RECIPIENT_LIST = os.getenv('RECIPIENT_LIST', '').split(',')
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-
+# APSCHEDULER
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 APSCHEDULER_RUN_NOW_TIMEOUT = 30  # Seconds
 
