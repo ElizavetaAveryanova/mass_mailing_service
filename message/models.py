@@ -15,3 +15,4 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'сообщение'
         verbose_name_plural = 'сообщения'
+
