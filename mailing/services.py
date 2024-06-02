@@ -88,7 +88,7 @@ def send_mail_func(mailing):
             subject=subject,
             message=text_of_message,
             from_email=EMAIL_HOST_USER,
-            recipient_list=recipient_list,
+            recipient_list=client_emails,
             fail_silently=False,
         )
         Log.objects.create(try_time=NOW, status=Log.SUCCESS, server_respond=send_response,
