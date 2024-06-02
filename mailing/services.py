@@ -91,11 +91,11 @@ def send_mail_func(mailing):
             recipient_list=client_emails,
             fail_silently=False,
         )
-        Log.objects.create(try_time=NOW, status=Log.SUCCESS, server_respond=send_response,
+        Log.objects.create(try_time=NOW, try_status=Log.SUCCESS, server_answer=send_response,
                               mailing=mailing)
         return send_response
     except smtplib.SMTPException as e:
-        Log.objects.create(last_try=NOW, status=Log.FAIL, server_respond=e,
+        Log.objects.create(last_try=NOW, try_status=Log.FAIL, server_answer=e,
                               mailing=mailing)
 
 def send_mails():
