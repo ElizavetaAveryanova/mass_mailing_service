@@ -24,7 +24,7 @@ class IndexView(TemplateView):
             context_data['article_list'] = article_random_list  # три рандомные статьи
 
         context_data['mailing_count'] = Mailing.objects.all().count()  # количество рассылок всего
-        context_data['mailing_started_count'] = Mailing.objects.filter(status='STARTED').count()  # активных рассылок
+        context_data['mailing_started_count'] = Mailing.objects.filter(status='started').count()  # активных рассылок
         context_data['mailing_clients_count'] = Client.objects.all().count()  # уникальных клиентов
 
         return context_data

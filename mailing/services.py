@@ -98,6 +98,8 @@ def send_mail_func(mailing):
         Log.objects.create(try_time=NOW, try_status=Log.FAIL, server_answer=e,
                               mailing=mailing)
 
+
+
 def send_mails():
     """Запускает рассылки, меняет их статусы, проверяет периодичность"""
     mailings = (Mailing.objects.filter(status__in=['created', 'started']).filter(datetime_start__lte=NOW).
